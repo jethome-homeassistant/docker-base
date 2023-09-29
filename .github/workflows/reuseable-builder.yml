@@ -46,9 +46,9 @@ jobs:
       matrix:
         arch: ${{ fromJson(inputs.architectures) }}
         include:
-          - os: ubuntu-24.04
+          - os: ${{ vars.RUNNER }}
           - arch: aarch64
-            os: ubuntu-24.04-arm
+            os: ${{ vars.RUNNERARM }}
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v6.0.0
@@ -87,7 +87,7 @@ jobs:
           echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_ENV
 
       - name: Build base image
-        uses: home-assistant/builder@2025.09.0
+        uses: jethome-homeassistant/builder@2025.09.0
         with:
           image: ${{ matrix.arch }}
           args: |
