@@ -16,7 +16,7 @@ env:
 jobs:
   init:
     name: Initialize build
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     outputs:
       architectures_alpine: ${{ steps.info_alpine.outputs.architectures }}
       architectures_debian: ${{ steps.info_debian.outputs.architectures }}
@@ -34,25 +34,25 @@ jobs:
 
       - name: Get information Alpine
         id: info_alpine
-        uses: home-assistant/actions/helpers/info@master
+        uses: jethome-homeassistant/actions/helpers/info@master-jethub
         with:
           path: "${{ github.workspace }}/alpine"
 
       - name: Get information Debian
         id: info_debian
-        uses: home-assistant/actions/helpers/info@master
+        uses: jethome-homeassistant/actions/helpers/info@master-jethub
         with:
           path: "${{ github.workspace }}/debian"
 
       - name: Get information Ubuntu
         id: info_ubuntu
-        uses: home-assistant/actions/helpers/info@master
+        uses: jethome-homeassistant/actions/helpers/info@master-jethub
         with:
           path: "${{ github.workspace }}/ubuntu"
 
       - name: Get version
         id: version
-        uses: home-assistant/actions/helpers/version@master
+        uses: jethome-homeassistant/actions/helpers/version@master-jethub
         with:
           type: ${{ env.BUILD_TYPE }}
 
