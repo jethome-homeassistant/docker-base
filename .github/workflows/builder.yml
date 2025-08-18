@@ -32,31 +32,31 @@ jobs:
 
       - name: Get information Alpine
         id: info_alpine
-        uses: jethub-homeassistant/actions/helpers/info@master-jethub
+        uses: jethome-homeassistant/actions/helpers/info@master-jethub
         with:
           path: "${{ github.workspace }}/alpine"
 
       - name: Get information Debian
         id: info_debian
-        uses: jethub-homeassistant/actions/helpers/info@master-jethub
+        uses: jethome-homeassistant/actions/helpers/info@master-jethub
         with:
           path: "${{ github.workspace }}/debian"
 
       - name: Get information Ubuntu
         id: info_ubuntu
-        uses: jethub-homeassistant/actions/helpers/info@master-jethub
+        uses: jethome-homeassistant/actions/helpers/info@master-jethub
         with:
           path: "${{ github.workspace }}/ubuntu"
 
       - name: Get information Raspbian
         id: info_raspbian
-        uses: jethub-homeassistant/actions/helpers/info@master-jethub
+        uses: jethome-homeassistant/actions/helpers/info@master-jethub
         with:
           path: "${{ github.workspace }}/raspbian"
 
       - name: Get version
         id: version
-        uses: jethub-homeassistant/actions/helpers/version@master-jethub
+        uses: jethome-homeassistant/actions/helpers/version@master-jethub
         with:
           type: ${{ env.BUILD_TYPE }}
 
@@ -94,7 +94,7 @@ jobs:
           fi
 
       - name: Build base image
-        uses: jethub-homeassistant/builder@2025.03.0
+        uses: jethome-homeassistant/builder@2025.03.0
         with:
           args: |
             $BUILD_ARGS \
@@ -138,7 +138,7 @@ jobs:
           fi
 
       - name: Build base image
-        uses: jethub-homeassistant/builder@2025.03.0
+        uses: jethome-homeassistant/builder@2025.03.0
         with:
           args: |
             $BUILD_ARGS \
@@ -183,7 +183,7 @@ jobs:
           fi
 
       - name: Build base image
-        uses: jethub-homeassistant/builder@2025.03.0
+        uses: jethome-homeassistant/builder@2025.03.0
         with:
           args: |
             $BUILD_ARGS \
@@ -227,7 +227,7 @@ jobs:
           fi
 
       - name: Build base image
-        uses: jethub-homeassistant/builder@2025.03.0
+        uses: jethome-homeassistant/builder@2025.03.0
         with:
           args: |
             $BUILD_ARGS \
@@ -274,7 +274,7 @@ jobs:
           fi
 
       - name: Build base image
-        uses: jethub-homeassistant/builder@2025.03.0
+        uses: jethome-homeassistant/builder@2025.03.0
         with:
           args: |
             $BUILD_ARGS \
