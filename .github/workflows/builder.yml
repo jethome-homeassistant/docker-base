@@ -19,7 +19,7 @@ env:
 jobs:
   init:
     name: Initialize build
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER }}
     permissions:
       contents: read
     outputs:
