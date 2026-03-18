@@ -90,6 +90,27 @@ jobs:
 
           echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_ENV
 
+      - name: Fix Docker DNS for BuildKit
+        shell: bash
+        run: |
+          DAEMON_JSON="/etc/docker/daemon.json"
+          if [ -f "$DAEMON_JSON" ]; then
+            sudo cp "$DAEMON_JSON" "${DAEMON_JSON}.bak"
+            sudo python3 -c "
+          import json, sys
+          with open('$DAEMON_JSON') as f:
+              cfg = json.load(f)
+          cfg['dns'] = ['8.8.8.8', '8.8.4.4']
+          with open('$DAEMON_JSON', 'w') as f:
+              json.dump(cfg, f, indent=2)
+          "
+          else
+            echo '{"dns":["8.8.8.8","8.8.4.4"]}' | sudo tee "$DAEMON_JSON"
+          fi
+          sudo systemctl restart docker
+          echo "Docker daemon.json:"
+          cat "$DAEMON_JSON"
+
       - name: Build base image
         uses: jethome-homeassistant/builder@2026.02.1
         with:
