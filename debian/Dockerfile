@@ -15,9 +15,14 @@ ENV \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-x", "-c"]
 
+ARG BASHIO_REPOSITORY=hassio-addons/bashio
 ARG BASHIO_VERSION=0.17.5
-ARG TEMPIO_VERSION=2024.11.2
+ARG S6_OVERLAY_ARCH
+ARG S6_OVERLAY_REPOSITORY=just-containers/s6-overlay
 ARG S6_OVERLAY_VERSION=3.2.2.0
+ARG TEMPIO_ARCH
+ARG TEMPIO_REPOSITORY=home-assistant/tempio
+ARG TEMPIO_VERSION=2024.11.2
 
 # Sanity check for later steps
 ARG TARGETARCH
@@ -44,12 +49,12 @@ RUN \
     && mkdir -p /usr/share/man/man1
 
 # S6-Overlay
-ADD --unpack=true "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" /
-ADD --unpack=true "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz" /
-ADD --unpack=true "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz" /
+ADD --unpack=true "https://github.com/${S6_OVERLAY_REPOSITORY}/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" /
+ADD --unpack=true "https://github.com/${S6_OVERLAY_REPOSITORY}/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz" /
+ADD --unpack=true "https://github.com/${S6_OVERLAY_REPOSITORY}/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz" /
 
 # bashio
-ADD --unpack=true "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" /usr/src/bashio
+ADD --unpack=true "https://github.com/${BASHIO_REPOSITORY}/archive/v${BASHIO_VERSION}.tar.gz" /usr/src/bashio
 
 WORKDIR /usr/src/bashio
 
@@ -61,14 +66,21 @@ RUN \
 # Arch-specific downloads (tempio and s6-overlay)
 RUN \
     case "${TARGETARCH}" in \
-        amd64) TEMPIO_ARCH="amd64"; S6_ARCH="x86_64" ;; \
-        arm64) TEMPIO_ARCH="aarch64"; S6_ARCH="aarch64" ;; \
-        *) echo "Unsupported TARGETARCH: ${TARGETARCH}" && exit 1 ;; \
+        amd64) \
+            S6_OVERLAY_ARCH="${S6_OVERLAY_ARCH:-x86_64}" \
+            ;; \
+        arm64) \
+            S6_OVERLAY_ARCH="${S6_OVERLAY_ARCH:-aarch64}" \
+            TEMPIO_ARCH="${TEMPIO_ARCH:-aarch64}" \
+            ;; \
     esac \
-    && curl -L -f -s "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" \
+    && echo "Selected from TARGETARCH=${TARGETARCH} arch-specific" \
+        " S6_OVERLAY_ARCH=${S6_OVERLAY_ARCH:=${TARGETARCH}}" \
+        " TEMPIO_ARCH=${TEMPIO_ARCH:=${TARGETARCH}}" \
+    && curl -L -f -s "https://github.com/${S6_OVERLAY_REPOSITORY}/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz" \
         | tar Jxvf - -C / \
     && curl -L -f -s -o /usr/bin/tempio \
-        "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${TEMPIO_ARCH}" \
+        "https://github.com/${TEMPIO_REPOSITORY}/releases/download/${TEMPIO_VERSION}/tempio_${TEMPIO_ARCH}" \
     && chmod a+x /usr/bin/tempio
 
 # Touch-ups and cleanup
